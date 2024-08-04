@@ -113,4 +113,13 @@ public class AccountEntity {
     this.lastUpdated = lastUpdated;
   }
 
+  public void debit(final BigDecimal amount, ZonedDateTime transferDate) {
+    this.balance = this.balance.subtract(amount);
+    this.setLastUpdated(transferDate);
+  }
+
+  public void credit(BigDecimal amount, ZonedDateTime transferDate) {
+    this.balance = this.balance.add(amount);
+    this.setLastUpdated(transferDate);
+  }
 }

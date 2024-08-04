@@ -2,6 +2,7 @@ package andrelsf.com.github.msaccounts.repositories;
 
 import andrelsf.com.github.msaccounts.entities.AccountEntity;
 import andrelsf.com.github.msaccounts.entities.AccountStatus;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -20,4 +21,6 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
       @Param("status") AccountStatus status,
       @Param("accountNumber") Integer accountNumber,
       Pageable pageable);
+  Optional<AccountEntity> findByAgencyAndAccountNumber(Integer agency, Integer accountNumber);
+  Optional<AccountEntity> findByIdAndBalanceGreaterThanEqual(String accountId, BigDecimal amountToTransfer);
 }
