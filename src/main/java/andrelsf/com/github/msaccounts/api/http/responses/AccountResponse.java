@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 public record AccountResponse(
   String accountId,
-  String customerId,
   Integer agency,
   Integer accountNumber,
   String status,

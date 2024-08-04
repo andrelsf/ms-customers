@@ -11,7 +11,6 @@ public class Mapper {
   public static AccountResponse toAccountResponse(AccountEntity accountEntity) {
     return new AccountResponse(
         accountEntity.getId(),
-        accountEntity.getCustomerId(),
         accountEntity.getAgency(),
         accountEntity.getAccountNumber(),
         accountEntity.getStatus().name(),

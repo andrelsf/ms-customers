@@ -22,9 +22,6 @@ public class AccountEntity {
   @Column(name = "account_id", length = 36, nullable = false)
   private String id;
 
-  @Column(length = 36, nullable = false)
-  private String customerId;
-
   @Column(nullable = false)
   private Integer agency;
 
@@ -48,11 +45,10 @@ public class AccountEntity {
   }
 
   public AccountEntity(
-      String id, String customerId, Integer agency, Integer accountNumber,
+      String id, Integer agency, Integer accountNumber,
       AccountStatus status, BigDecimal balance, ZonedDateTime createdAt,
       ZonedDateTime lastUpdated) {
     this.id = id;
-    this.customerId = customerId;
     this.agency = agency;
     this.accountNumber = accountNumber;
     this.status = status;
@@ -67,14 +63,6 @@ public class AccountEntity {
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public String getCustomerId() {
-    return customerId;
-  }
-
-  public void setCustomerId(String customerId) {
-    this.customerId = customerId;
   }
 
   public Integer getAgency() {

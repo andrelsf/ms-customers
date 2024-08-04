@@ -20,7 +20,4 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
       @Param("status") AccountStatus status,
       @Param("accountNumber") Integer accountNumber,
       Pageable pageable);
-
-  Optional<AccountEntity> findByCustomerId(String string);
-
 }

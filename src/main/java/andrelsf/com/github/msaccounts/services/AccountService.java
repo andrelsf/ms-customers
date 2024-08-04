@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface AccountService {
 
+  AccountResponse findById(final UUID accountId);
   List<AccountResponse> getAccounts(final Params params);
-  AccountResponse findByByCustomerId(final UUID customerId);
 
 }

@@ -33,10 +33,10 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   @Transactional(readOnly = true)
-  public AccountResponse findByByCustomerId(final UUID customerId) {
-    return accountRepository.findByCustomerId(customerId.toString())
+  public AccountResponse findById(final UUID accountId) {
+    return accountRepository.findById(accountId.toString())
         .map(Mapper::toAccountResponse)
         .orElseThrow(() ->
-            new AccountNotFoundException("Account not found by customerId=".concat(customerId.toString())));
+            new AccountNotFoundException("Account not found by accountId=".concat(accountId.toString())));
   }
 }
