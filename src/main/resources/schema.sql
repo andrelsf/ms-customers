@@ -20,7 +20,7 @@ CREATE TABLE transactions (
     target_agency         INTEGER           NOT NULL,
     target_account_number INTEGER           NOT NULL,
     amount                DECIMAL(12, 2)    NOT NULL,
-    status                VARCHAR(9)        NOT NULL, -- COMPLETED, FAILED
+    status                VARCHAR(9)        NOT NULL,
     comment               VARCHAR(120)      NOT NULL,
     transfer_date         TIMESTAMP         DEFAULT CURRENT_TIMESTAMP
 );
