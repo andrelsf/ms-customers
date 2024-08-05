@@ -26,3 +26,8 @@ CREATE TABLE transfers (
 
 CREATE INDEX idx_transfers
 ON transfers (transfer_id, account_id, status);
+
+-- Create Table transactions
+CREATE TABLE transactions (
+    transaction_id  VARCHAR(36) NOT NULL PRIMARY KEY
+);

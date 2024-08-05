@@ -9,6 +9,7 @@ import andrelsf.com.github.msaccounts.entities.TransferRecord;
 import andrelsf.com.github.msaccounts.handlers.exceptions.UnableToTransferException;
 import andrelsf.com.github.msaccounts.repositories.TransferRepository;
 import andrelsf.com.github.msaccounts.services.AccountService;
+import andrelsf.com.github.msaccounts.services.TransactionService;
 import andrelsf.com.github.msaccounts.services.TransferService;
 import andrelsf.com.github.msaccounts.utils.Mapper;
 import java.math.BigDecimal;
@@ -25,10 +26,13 @@ public class TransferServiceImpl implements TransferService {
 
   private final AccountService accountService;
   private final TransferRepository transferRepository;
+  private final TransactionService transactionService;
 
-  public TransferServiceImpl(AccountService accountService, TransferRepository transferRepository) {
+  public TransferServiceImpl(AccountService accountService, TransferRepository transferRepository,
+      TransactionService transactionService) {
     this.accountService = accountService;
     this.transferRepository = transferRepository;
+    this.transactionService = transactionService;
   }
 
   @Override
@@ -41,9 +45,9 @@ public class TransferServiceImpl implements TransferService {
       final AccountResponse sourceAccount = accountService.getAccountForTransfer(sourceAccountId, request);
       final AccountResponse targetAccount = accountService.getTargetAccountBy(sourceAccountId, request);
 
-      // TODO: transactionService.lock(sourceAccountId);
+      transactionService.lock(sourceAccountId);
       accountService.processTransfer(sourceAccount.accountId(), targetAccount.accountId(), request.amount());
-      // TODO: transactionSerivce.unlock(sourceAccountId);
+      transactionService.unlock(sourceAccountId);
 
       final TransferRecord transferRecord = TransferRecord.of(
           sourceAccountId, request, TransactionStatus.COMPLETED.name(), TransactionStatus.COMPLETED.getMessage());
