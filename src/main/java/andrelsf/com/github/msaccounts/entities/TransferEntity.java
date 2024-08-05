@@ -1,6 +1,5 @@
 package andrelsf.com.github.msaccounts.entities;
 
-import andrelsf.com.github.msaccounts.api.http.requests.PostTransferRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,7 +12,6 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -43,6 +41,9 @@ public class TransferEntity {
   @Column(nullable = false)
   private TransactionStatus status;
 
+  @Column(length = 180, nullable = false)
+  private String message;
+
   @CreationTimestamp
   private ZonedDateTime transferDate;
 
@@ -51,26 +52,15 @@ public class TransferEntity {
 
   public TransferEntity(
       String id, String accountId, Integer targetAgency, Integer targetAccountNumber,
-      BigDecimal amount, TransactionStatus status, ZonedDateTime transferDate) {
+      BigDecimal amount, TransactionStatus status, String message, ZonedDateTime transferDate) {
     this.id = id;
     this.accountId = accountId;
     this.targetAgency = targetAgency;
     this.targetAccountNumber = targetAccountNumber;
     this.amount = amount;
     this.status = status;
+    this.message = message;
     this.transferDate = transferDate;
-  }
-
-  public static TransferEntity of(
-      final UUID accountId, final PostTransferRequest request, final TransactionStatus transactionStatus) {
-    TransferEntity transferEntity = new TransferEntity();
-    transferEntity.setAccountId(accountId.toString());
-    transferEntity.setTargetAgency(request.agency());
-    transferEntity.setTargetAccountNumber(request.accountNumber());
-    transferEntity.setAmount(request.amount());
-    transferEntity.setStatus(transactionStatus);
-    transferEntity.setTransferDate(ZonedDateTime.now());
-    return transferEntity;
   }
 
   public String getId() {
@@ -121,6 +111,14 @@ public class TransferEntity {
     this.status = status;
   }
 
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
   public ZonedDateTime getTransferDate() {
     return transferDate;
   }
@@ -144,12 +142,13 @@ public class TransferEntity {
         && Objects.equals(targetAccountNumber, that.targetAccountNumber)
         && Objects.equals(amount, that.amount)
         && status == that.status
+        && Objects.equals(message, that.message)
         && Objects.equals(transferDate, that.transferDate);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
-        id, accountId, targetAgency, targetAccountNumber, amount, status, transferDate);
+        id, accountId, targetAgency, targetAccountNumber, amount, status, message, transferDate);
   }
 }

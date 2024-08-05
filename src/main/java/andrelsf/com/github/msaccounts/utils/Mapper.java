@@ -31,6 +31,7 @@ public class Mapper {
         transfer.getTargetAccountNumber(),
         transfer.getAmount(),
         transfer.getStatus().name(),
+        transfer.getMessage(),
         transfer.getTransferDate().toString());
   }
 
@@ -41,6 +42,7 @@ public class Mapper {
     transferEntity.setTargetAccountNumber(transferRecord.targetAccountNumber());
     transferEntity.setAmount(transferRecord.amount());
     transferEntity.setStatus(TransactionStatus.valueOf(transferRecord.status()));
+    transferEntity.setMessage(transferRecord.message());
     transferEntity.setTransferDate(ZonedDateTime.now());
     return transferEntity;
   }

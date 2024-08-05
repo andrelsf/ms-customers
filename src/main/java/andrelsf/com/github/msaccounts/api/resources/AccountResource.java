@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,10 +65,19 @@ public class AccountResource {
   public ResponseEntity<TransferResponse> postDoTransfer(
       @PathVariable @NotNull final UUID accountId,
       @RequestBody @Valid final PostTransferRequest postTransferRequest) {
-    final UUID transferId = transferService.doTransfer(accountId, postTransferRequest);
+    final TransferResponse transferResponse = transferService.doTransfer(accountId, postTransferRequest);
     final URI uriLocation = UriComponentsBuilder.fromUriString("/api/v1/accounts/{accountId}/transfers/{transferId}")
-        .buildAndExpand(accountId.toString(), transferId.toString())
+        .buildAndExpand(accountId.toString(), transferResponse.transferId())
         .toUri();
-    return ResponseEntity.created(uriLocation).build();
+
+    if (transferResponse.hasError()) {
+      return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .location(uriLocation)
+          .body(transferResponse);
+    }
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .location(uriLocation)
+        .body(transferResponse);
   }
 }

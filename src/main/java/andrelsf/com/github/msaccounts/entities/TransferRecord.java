@@ -9,15 +9,21 @@ public record TransferRecord(
    Integer targetAgency,
    Integer targetAccountNumber,
    BigDecimal amount,
-   String status
+   String status,
+   String message
 ) {
 
-  public static TransferRecord of(final UUID accountId, final PostTransferRequest request, final String status) {
+  public static TransferRecord of(
+      final UUID accountId,
+      final PostTransferRequest request,
+      final String status,
+      final String message) {
     return new TransferRecord(
         accountId.toString(),
         request.agency(),
         request.accountNumber(),
         request.amount(),
-        status);
+        status,
+        message);
   }
 }

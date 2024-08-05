@@ -20,6 +20,7 @@ CREATE TABLE transfers (
     target_account_number INTEGER        NOT NULL,
     amount                DECIMAL(12, 2) NOT NULL,
     status                VARCHAR(9)     NOT NULL,
+    message               VARCHAR(180)   NOT NULL,
     transfer_date         TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -9,5 +9,5 @@ import java.util.UUID;
 public interface TransferService {
   List<TransferResponse> getAllTransfers(final UUID accountId);
   TransferResponse registerTransfer(final TransferRecord transferRecord);
-  UUID doTransfer(final UUID accountId, final PostTransferRequest request);
+  TransferResponse doTransfer(final UUID accountId, final PostTransferRequest request);
 }
