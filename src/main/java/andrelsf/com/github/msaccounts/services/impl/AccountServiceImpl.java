@@ -41,9 +41,9 @@ public class AccountServiceImpl implements AccountService {
   }
 
   @Override
-  @Transactional
-  public AccountResponse getTargetAccountBy(final UUID sourceAccountId, final PostTransferRequest request) {
-    return accountRepository.findByAgencyAndAccountNumber(request.agency(), request.accountNumber())
+  @Transactional(readOnly = true)
+  public AccountResponse getTargetAccountBy(final Integer agency, final Integer accountNumber) {
+    return accountRepository.findByAgencyAndAccountNumber(agency, accountNumber)
         .map(Mapper::toAccountResponse)
         .orElseThrow(() -> new UnableToTransferException(
               "Unable to initiate transfer.\n Target account not found by agency and account number."));

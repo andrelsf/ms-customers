@@ -43,7 +43,7 @@ public class TransferServiceImpl implements TransferService {
       }
 
       final AccountResponse sourceAccount = accountService.getAccountForTransfer(sourceAccountId, request);
-      final AccountResponse targetAccount = accountService.getTargetAccountBy(sourceAccountId, request);
+      final AccountResponse targetAccount = accountService.getTargetAccountBy(request.agency(), request.accountNumber());
 
       transactionService.lock(sourceAccountId);
       accountService.processTransfer(sourceAccount.accountId(), targetAccount.accountId(), request.amount());

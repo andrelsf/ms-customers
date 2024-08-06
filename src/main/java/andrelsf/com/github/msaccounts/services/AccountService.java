@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface AccountService {
   AccountResponse findById(final UUID accountId);
   List<AccountResponse> getAccounts(final Params params);
+  AccountResponse getTargetAccountBy(final Integer agency, final Integer accountNumber);
   void processTransfer(String sourceAccountId, String targetAccountId, BigDecimal amount);
   AccountResponse getAccountForTransfer(final UUID accountId, final PostTransferRequest request);
-  AccountResponse getTargetAccountBy(final UUID sourceAccountId, final PostTransferRequest request);
 }
