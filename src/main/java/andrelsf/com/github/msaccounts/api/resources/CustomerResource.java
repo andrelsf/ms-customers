@@ -2,13 +2,17 @@ package andrelsf.com.github.msaccounts.api.resources;
 
 import andrelsf.com.github.msaccounts.api.http.requests.Params;
 import andrelsf.com.github.msaccounts.api.http.requests.PostCustomerRequest;
+import andrelsf.com.github.msaccounts.api.http.requests.PostTransferRequest;
 import andrelsf.com.github.msaccounts.api.http.responses.CustomerResponse;
+import andrelsf.com.github.msaccounts.api.http.responses.TransferResponse;
 import andrelsf.com.github.msaccounts.services.CustomerService;
+import andrelsf.com.github.msaccounts.services.TransferService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +32,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class CustomerResource {
 
   private final CustomerService customerService;
+  private final TransferService transferService;
 
-  public CustomerResource(CustomerService customerService) {
+  public CustomerResource(CustomerService customerService, TransferService transferService) {
     this.customerService = customerService;
+    this.transferService = transferService;
   }
 
   @PostMapping
@@ -55,5 +61,31 @@ public class CustomerResource {
   public ResponseEntity<CustomerResponse> getById(@PathVariable @NotNull final UUID customerId) {
     final CustomerResponse clientResponse = customerService.findById(customerId.toString());
     return ResponseEntity.ok(clientResponse);
+  }
+
+  @GetMapping("/{customerId}/transfers")
+  public ResponseEntity<List<TransferResponse>> getTransfers(@PathVariable @NotNull final UUID customerId) {
+    final List<TransferResponse> transfers = transferService.getAllTransfers(customerId);
+    return ResponseEntity.ok(transfers);
+  }
+
+  @PostMapping("/{customerId}/transfers")
+  public ResponseEntity<TransferResponse> postDoTransfer(
+      @PathVariable @NotNull final UUID customerId,
+      @RequestBody @Valid final PostTransferRequest postTransferRequest) {
+    final TransferResponse transferResponse = transferService.doTransfer(customerId, postTransferRequest);
+    final URI uriLocation = UriComponentsBuilder.fromUriString("/api/v1/customers/{customerId}/transfers/{transferId}")
+        .buildAndExpand(customerId.toString(), transferResponse.transferId())
+        .toUri();
+
+    if (transferResponse.hasError()) {
+      return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .location(uriLocation)
+          .body(transferResponse);
+    }
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .location(uriLocation)
+        .body(transferResponse);
   }
 }

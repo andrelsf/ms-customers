@@ -46,12 +46,29 @@ public class CustomerEntity {
     this.cpf = cpf;
   }
 
+  public CustomerEntity(
+      String id,
+      String name,
+      String cpf,
+      AccountEntity account) {
+    this.id = id;
+    this.name = name;
+    this.cpf = cpf;
+    this.account = account;
+    this.createdAt = ZonedDateTime.now();
+    this.updatedAt = ZonedDateTime.now();
+  }
+
   public AccountEntity getAccount() {
     return account;
   }
 
   public String getId() {
     return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getName() {

@@ -2,10 +2,12 @@ package andrelsf.com.github.msaccounts.services.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import andrelsf.com.github.msaccounts.api.http.requests.AccountRequest;
 import andrelsf.com.github.msaccounts.api.http.requests.Params;
 import andrelsf.com.github.msaccounts.api.http.requests.PostTransferRequest;
 import andrelsf.com.github.msaccounts.api.http.responses.AccountResponse;
@@ -199,6 +201,24 @@ public class AccountServiceImplTest {
         accountService.getTargetAccountBy(request.agency(), request.accountNumber()))
         .isInstanceOf(UnableToTransferException.class)
         .hasMessage("Unable to initiate transfer.\n Target account not found by agency and account number.");
+  }
+
+  @Test
+  @DisplayName("Deve registrar uma nova conta")
+  void test_create() {
+    final String accountId = UUID.randomUUID().toString();
+    final AccountRequest accountRequest = new AccountRequest(1234, 4321);
+    AccountEntity accountEntity = buildAccountEntity();
+    accountEntity.setId(accountId);
+
+    when(accountRepository.save(any(AccountEntity.class)))
+        .thenReturn(accountEntity);
+
+    final AccountResponse accountResponse = accountService.create(accountId, accountRequest);
+
+    assertThat(accountResponse)
+        .isNotNull()
+        .isInstanceOf(AccountResponse.class);
   }
 
   private PostTransferRequest buildPostTransferRequest() {
