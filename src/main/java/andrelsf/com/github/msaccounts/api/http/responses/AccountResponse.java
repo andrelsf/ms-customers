@@ -10,6 +10,4 @@ public record AccountResponse(
   BigDecimal balance,
   String createdAt,
   String lastUpdated
-) {
-
-}
+) {}

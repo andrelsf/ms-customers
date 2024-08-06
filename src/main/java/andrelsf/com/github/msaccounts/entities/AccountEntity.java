@@ -4,9 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -18,7 +17,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class AccountEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "account_id", length = 36, nullable = false)
   private String id;
 
@@ -35,6 +33,8 @@ public class AccountEntity {
   @Column(nullable = false)
   private BigDecimal balance;
 
+  @OneToOne(mappedBy = "account")
+  private CustomerEntity customer;
   @CreationTimestamp
   private ZonedDateTime createdAt;
 
@@ -42,19 +42,6 @@ public class AccountEntity {
   private ZonedDateTime lastUpdated;
 
   public AccountEntity() {
-  }
-
-  public AccountEntity(
-      String id, Integer agency, Integer accountNumber,
-      AccountStatus status, BigDecimal balance, ZonedDateTime createdAt,
-      ZonedDateTime lastUpdated) {
-    this.id = id;
-    this.agency = agency;
-    this.accountNumber = accountNumber;
-    this.status = status;
-    this.balance = balance;
-    this.createdAt = createdAt;
-    this.lastUpdated = lastUpdated;
   }
 
   public String getId() {
@@ -121,5 +108,15 @@ public class AccountEntity {
   public void credit(BigDecimal amount, ZonedDateTime transferDate) {
     this.balance = this.balance.add(amount);
     this.setLastUpdated(transferDate);
+  }
+
+  public void fillWith(String accountId, Integer agency, Integer accountNumber) {
+    this.setId(accountId);
+    this.setAgency(agency);
+    this.setAccountNumber(accountNumber);
+    this.setStatus(AccountStatus.ACTIVE);
+    this.setBalance(new BigDecimal("0.0"));
+    this.setCreatedAt(ZonedDateTime.now());
+    this.setLastUpdated(ZonedDateTime.now());
   }
 }

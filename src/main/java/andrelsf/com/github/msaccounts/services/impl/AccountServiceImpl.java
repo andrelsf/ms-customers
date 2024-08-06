@@ -1,5 +1,6 @@
 package andrelsf.com.github.msaccounts.services.impl;
 
+import andrelsf.com.github.msaccounts.api.http.requests.AccountRequest;
 import andrelsf.com.github.msaccounts.api.http.requests.Params;
 import andrelsf.com.github.msaccounts.api.http.requests.PostTransferRequest;
 import andrelsf.com.github.msaccounts.api.http.responses.AccountResponse;
@@ -38,6 +39,13 @@ public class AccountServiceImpl implements AccountService {
         .stream()
         .map(Mapper::toAccountResponse)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public AccountResponse create(final String accountId, final AccountRequest account) {
+    AccountEntity accountEntity = Mapper.buildAccountEntity(accountId, account);
+    accountRepository.save(accountEntity);
+    return Mapper.toAccountResponse(accountEntity);
   }
 
   @Override

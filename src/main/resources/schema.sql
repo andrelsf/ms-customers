@@ -1,4 +1,16 @@
 -- Create Table Clients
+CREATE TABLE customers (
+    customer_id  VARCHAR(36)  NOT NULL PRIMARY KEY,
+    name         VARCHAR(120) NOT NULL,
+    cpf          VARCHAR(11)  UNIQUE NOT NULL,
+    created_at   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_customers
+ON customers (customer_id, name, created_at);
+
+-- Create Table accounts
 CREATE TABLE accounts (
     account_id     VARCHAR(36)       NOT NULL PRIMARY KEY,
     agency         INTEGER           NOT NULL,

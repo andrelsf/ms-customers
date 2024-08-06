@@ -1,8 +1,12 @@
 package andrelsf.com.github.msaccounts.utils;
 
+import andrelsf.com.github.msaccounts.api.http.requests.AccountRequest;
+import andrelsf.com.github.msaccounts.api.http.requests.PostCustomerRequest;
 import andrelsf.com.github.msaccounts.api.http.responses.AccountResponse;
+import andrelsf.com.github.msaccounts.api.http.responses.CustomerResponse;
 import andrelsf.com.github.msaccounts.api.http.responses.TransferResponse;
 import andrelsf.com.github.msaccounts.entities.AccountEntity;
+import andrelsf.com.github.msaccounts.entities.CustomerEntity;
 import andrelsf.com.github.msaccounts.entities.TransactionStatus;
 import andrelsf.com.github.msaccounts.entities.TransferEntity;
 import andrelsf.com.github.msaccounts.entities.TransferRecord;
@@ -45,5 +49,23 @@ public class Mapper {
     transferEntity.setMessage(transferRecord.message());
     transferEntity.setTransferDate(ZonedDateTime.now());
     return transferEntity;
+  }
+
+  public static CustomerEntity toCustomerEntity(PostCustomerRequest customerRequest) {
+    return new CustomerEntity(customerRequest.name(), customerRequest.cpf());
+  }
+
+  public static AccountEntity buildAccountEntity(String accountId, AccountRequest account) {
+    AccountEntity accountEntity = new AccountEntity();
+    accountEntity.fillWith(accountId, account.agency(), account.accountNumber());;
+    return accountEntity;
+  }
+
+  public static CustomerResponse toCustomerResponse(CustomerEntity customerEntity) {
+    return new CustomerResponse(
+        customerEntity.getId(),
+        customerEntity.getName(),
+        customerEntity.getCpf(),
+        Mapper.toAccountResponse(customerEntity.getAccount()));
   }
 }
