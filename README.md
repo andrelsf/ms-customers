@@ -1,5 +1,81 @@
 # Microservice Customers
 
+API Customers 
+Features
+- Cadastro de clientes e contas.
+- Listagem de todos os clientes.
+- Filtro na listagem por numero da conta.
+- Transferencia bancaria entre contras, com valor maximo da transferencia de R$10.000,00.
+- Bloqueio de concorrencia nas transferencias.
+- Registro de tentativas de transferencia com sucesso e falhas.
+- Listagem das transferencias realizadas de cada usuario.
+
+### Requirements
+ - Java 21
+ - Maven 8.5+
+ - IDE VSCode or Intellij
+ - NOTA: Base de dados H2, ou seja, base em memoria.
+
+### Recursos
+
+| Method |             Headers             | Path                                     | Description                                             |
+|:------:|:-------------------------------:|:-----------------------------------------|:--------------------------------------------------------|
+|  POST  | Content-Type: application/json  | /api/v1/customers                        | Registra um novo cliente e sua conta.                    |
+|  GET   | Content-Type: application/json  | /api/v1/customers                        | Obtem a listagem de todos os clientes cadastros.        |
+|  GET   | Content-Type: application/json  | /api/v1/customers?accountNumber=1234     | Filtragem de todos os clientes pelo numero da conta.    |
+|  GET   | Content-Type: application/json  | /api/v1/customers?page=0&size=10         | Controle de paginacao.                                  |
+|  GET   | Content-Type: application/json  | /api/v1/customers/{customerId}           | Obtem o registro do cliente pelo ID.                    |
+|  POST  | Content-Type: application/json  | /api/v1/customers/{customerId}/transfers | Realiza transferencia entre contas.                     |
+|  GET   | Content-Type: application/json  | /api/v1/customers/{customerId}/transfers | Obtem a listagem de todas as transferencias realizadas. |
+
+### Exemplos com cURL
+
+`Registra um novo cliente`
+```shell
+curl --request POST \
+--location 'http://localhost:8091/api/v1/customers' \
+--header 'Content-Type: application/json; charset=utf-8' \
+--data '{
+    "name": "Jose Nome Facil",
+    "cpf": "11122233344",
+    "account": {
+        "agency": 9876,
+        "accountNumber": 1007659
+    }
+}'
+```
+
+---
+
+
+
+### Exemplos de payloads
+
+`POST /api/v1/customers`
+```json
+{
+    "name": "Jose Nome Facil",
+    "cpf": "11122233344",
+    "account": {
+        "agency": 9876,
+        "accountNumber": 1007659
+    }
+}
+```
+
+---
+
+`POST /api/v1/customers/{customerId}/transfers`
+```json
+{
+    "agency": 1234,
+    "accountNumber": 1000223,
+    "amount": 1000
+}
+```
+
+
+
 ### Reference Documentation
 
 For further reference, please consider the following sections:
