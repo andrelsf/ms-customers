@@ -12,13 +12,14 @@ Features
 
 ### Requirements
  - Java 21
- - Maven 8.5+
+ - Maven 3.8+
  - IDE VSCode or Intellij
  - NOTA: Base de dados H2, ou seja, base em memoria.
+ - Design de desenvolvimento em Camadas: Controller, Service e repository
 
 ### Recursos
 
-| Method |             Headers             | Path                                     | Description                                             |
+| Method |             Headers             | Resource                                 | Description                                             |
 |:------:|:-------------------------------:|:-----------------------------------------|:--------------------------------------------------------|
 |  POST  | Content-Type: application/json  | /api/v1/customers                        | Registra um novo cliente e sua conta.                    |
 |  GET   | Content-Type: application/json  | /api/v1/customers                        | Obtem a listagem de todos os clientes cadastros.        |
@@ -30,7 +31,7 @@ Features
 
 ### Exemplos com cURL
 
-`Registra um novo cliente`
+#### Registra um novo cliente
 ```shell
 curl --request POST \
 --location 'http://localhost:8091/api/v1/customers' \
@@ -47,34 +48,71 @@ curl --request POST \
 
 ---
 
+#### Obtem a listagem de todos os clientes registrados paginado.
 
-
-### Exemplos de payloads
-
-`POST /api/v1/customers`
-```json
-{
-    "name": "Jose Nome Facil",
-    "cpf": "11122233344",
-    "account": {
-        "agency": 9876,
-        "accountNumber": 1007659
-    }
-}
+```shell
+curl --request GET \
+--location 'http://localhost:8091/api/v1/customers?page=0&size=10' \
+--header 'Content-Type: application/json; charset=utf-8'
 ```
 
 ---
 
-`POST /api/v1/customers/{customerId}/transfers`
-```json
-{
+#### Obtem o registro de um unico cliente pelo ID
+
+```shell
+curl --request GET \
+--location 'http://localhost:8091/api/v1/customers/3d05773e-513e-11ef-85b4-938a0beed59a' \
+--header 'Content-Type: application/json; charset=utf-8'
+```
+
+---
+
+#### Realiza filtro no recurso clientes pelo numero da conta.
+
+```shell
+curl --request GET \
+--location 'http://localhost:8091/api/v1/customers?accountNumber=1000112' \
+--header 'Content-Type: application/json'
+```
+
+---
+
+#### Tentativa de transferencia que excede o valor maximo permitido de R$10.000,00
+
+```shell
+curl --request POST \
+--location 'http://localhost:8091/api/v1/customers/3d05773e-513e-11ef-85b4-938a0beed59a/transfers' \
+--header 'Content-Type: application/json' \
+--data '{
+    "agency": 1234,
+    "accountNumber": 1000223,
+    "amount": 10001
+}'
+```
+
+---
+
+#### Transferencia da Alice para conta do Bob
+
+```shell
+curl --request POST \
+--location 'http://localhost:8091/api/v1/customers/3d05773e-513e-11ef-85b4-938a0beed59a/transfers' \
+--header 'Content-Type: application/json' \
+--data '{
     "agency": 1234,
     "accountNumber": 1000223,
     "amount": 1000
-}
+}'
 ```
 
+#### 
 
+```shell
+curl --request GET \
+--location 'http://localhost:8091/api/v1/customers/3d05773e-513e-11ef-85b4-938a0beed59a/transfers' \
+--header 'Content-Type: application/json'
+```
 
 ### Reference Documentation
 
