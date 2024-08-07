@@ -33,7 +33,7 @@ Features
 
 #### Registra um novo cliente
 ```shell
-curl --request POST \
+curl -v --request POST \
 --location 'http://localhost:8091/api/v1/customers' \
 --header 'Content-Type: application/json; charset=utf-8' \
 --data '{
@@ -45,6 +45,16 @@ curl --request POST \
     }
 }'
 ```
+Exemplo de resposta
+```shell
+< HTTP/1.1 201 Created
+< Connection: keep-alive
+< Location: /api/v1/customers/b5f849d6-5ebb-4fb6-a3c4-49e8bdcb1acc
+< Content-Length: 0
+< Date: Wed, 07 Aug 2024 02:46:36 GMT
+```
+
+> `NOTA`: Pelo header location e especificado como acessar o recurso registrado.
 
 ---
 
@@ -66,6 +76,24 @@ curl --request GET \
 --header 'Content-Type: application/json; charset=utf-8'
 ```
 
+Exemplo de resposta formatada
+```json
+{
+    "customerId": "3d05773e-513e-11ef-85b4-938a0beed59a",
+    "name": "Alice Bar",
+    "cpf": "22233344448",
+    "account": {
+        "accountId": "3d05773e-513e-11ef-85b4-938a0beed59a",
+        "agency": 1234,
+        "accountNumber": 1000112,
+        "status": "ACTIVE",
+        "balance": 10000.00,
+        "createdAt": "2024-08-06T22:13:14.986138-03:00",
+        "lastUpdated": "2024-08-06T22:13:14.986138-03:00"
+    }
+}
+```
+
 ---
 
 #### Realiza filtro no recurso clientes pelo numero da conta.
@@ -74,6 +102,26 @@ curl --request GET \
 curl --request GET \
 --location 'http://localhost:8091/api/v1/customers?accountNumber=1000112' \
 --header 'Content-Type: application/json'
+```
+
+Exemplo de resposta do filtro por numero da conta
+```json
+[
+    {
+        "customerId": "3d05773e-513e-11ef-85b4-938a0beed59a",
+        "name": "Alice Bar",
+        "cpf": "22233344448",
+        "account": {
+            "accountId": "3d05773e-513e-11ef-85b4-938a0beed59a",
+            "agency": 1234,
+            "accountNumber": 1000112,
+            "status": "ACTIVE",
+            "balance": 10000.00,
+            "createdAt": "2024-08-06T19:19:26.608698-03:00",
+            "lastUpdated": "2024-08-06T19:19:26.608698-03:00"
+        }
+    }
+]
 ```
 
 ---
@@ -91,6 +139,19 @@ curl --request POST \
 }'
 ```
 
+Resposta da tentativa de transferencia com valor que excede o permitido
+```json
+{
+    "transferId": "e520dcfb-c0f0-40d1-8575-ec8b409b5c65",
+    "targetAgency": 1234,
+    "targetAccountNumber": 1000223,
+    "amount": 10001,
+    "status": "FAILED",
+    "message": "Transfer amount not allowed",
+    "transferDate": "2024-08-06T23:52:39.959638-03:00[America/Sao_Paulo]"
+}
+```
+
 ---
 
 #### Transferencia da Alice para conta do Bob
@@ -106,6 +167,21 @@ curl --request POST \
 }'
 ```
 
+Exemplo de resposta
+```json
+{
+    "transferId": "4b968174-b8dd-45cc-87a4-d310a2852e42",
+    "targetAgency": 1234,
+    "targetAccountNumber": 1000223,
+    "amount": 1000,
+    "status": "COMPLETED",
+    "message": "Transfer completed successfully.",
+    "transferDate": "2024-08-06T23:54:22.427619-03:00[America/Sao_Paulo]"
+}
+```
+
+---
+
 #### 
 
 ```shell
@@ -114,29 +190,26 @@ curl --request GET \
 --header 'Content-Type: application/json'
 ```
 
-### Reference Documentation
-
-For further reference, please consider the following sections:
-
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/3.3.2/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.3.2/maven-plugin/build-image.html)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/3.3.2/reference/htmlsingle/index.html#web)
-
-### Guides
-
-The following guides illustrate how to use some features concretely:
-
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
-
-### Maven Parent overrides
-
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>`
-and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove
-those overrides.
+```json
+[
+    {
+        "transferId": "e520dcfb-c0f0-40d1-8575-ec8b409b5c65",
+        "targetAgency": 1234,
+        "targetAccountNumber": 1000223,
+        "amount": 10001.00,
+        "status": "FAILED",
+        "message": "Transfer amount not allowed",
+        "transferDate": "2024-08-06T23:52:39.959638-03:00"
+    },
+    {
+        "transferId": "4b968174-b8dd-45cc-87a4-d310a2852e42",
+        "targetAgency": 1234,
+        "targetAccountNumber": 1000223,
+        "amount": 1000.00,
+        "status": "COMPLETED",
+        "message": "Transfer completed successfully.",
+        "transferDate": "2024-08-06T23:54:22.427619-03:00"
+    }
+]
+```
 
