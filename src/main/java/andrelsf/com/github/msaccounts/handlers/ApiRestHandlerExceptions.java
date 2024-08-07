@@ -1,30 +1,48 @@
 package andrelsf.com.github.msaccounts.handlers;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import andrelsf.com.github.msaccounts.handlers.exceptions.CustomerNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
-public class ApiRestHandlerExceptions extends ResponseEntityExceptionHandler {
+public class ApiRestHandlerExceptions {
 
   private static final Logger log = LoggerFactory.getLogger(ApiRestHandlerExceptions.class);
 
   @ExceptionHandler(CustomerNotFoundException.class)
-  protected ResponseEntity<ApiErrorResponse> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+  public ResponseEntity<ApiErrorResponse> handleCustomerNotFoundException(CustomerNotFoundException ex) {
     log.error(ex.getMessage(), ex);
-    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-        .body(new ApiErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+    return ResponseEntity.status(NOT_FOUND)
+        .body(new ApiErrorResponse(NOT_FOUND.value(), ex.getMessage()));
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<ApiErrorResponse> handlerMethodArgumentTypeMismatchException(
+      MethodArgumentTypeMismatchException ex) {
+    log.error(ex.getMessage(), ex);
+    return ResponseEntity.status(BAD_REQUEST)
+        .body(new ApiErrorResponse(BAD_REQUEST.value(), "Invalid parameter"));
   }
 
   @ExceptionHandler(RuntimeException.class)
-  protected ResponseEntity<ApiErrorResponse> handlerRuntimeException(RuntimeException ex) {
+  public ResponseEntity<ApiErrorResponse> handlerRuntimeException(RuntimeException ex) {
     log.error(ex.getMessage(), ex);
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+        .body(ApiErrorResponse.contactSysAdmin());
+  }
+
+  @ExceptionHandler(Exception.class)
+  protected ResponseEntity<ApiErrorResponse> handlerException(Exception ex) {
+    log.error(ex.getMessage(), ex);
+    return ResponseEntity.status(INTERNAL_SERVER_ERROR)
         .body(ApiErrorResponse.contactSysAdmin());
   }
 }
