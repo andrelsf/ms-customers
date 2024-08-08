@@ -249,3 +249,9 @@ Exemplo de response
 < HTTP/1.1 204 No Content
 < Date: Thu, 08 Aug 2024 03:40:32 GMT
 ```
+
+---
+
+## Transfer: Diagram Sequence
+
+![Transfers diagram sequence](./docs/diagram-sequence-transfers.png)

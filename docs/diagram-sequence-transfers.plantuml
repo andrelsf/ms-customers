@@ -1,0 +1,67 @@
+@startuml
+title "MS-Customers Transfers Diagram Sequence"
+
+actor customer as "Customer" #Orange
+participant api_customer as "API Customers" #Orange
+database db as "Database" #Orange
+
+autonumber
+
+customer -> api_customer: POST: /customers/{UUIDv4}/transfers
+note right of customer
+{
+    "agency": 1234,
+    "accountNumber": 1000223,
+    "amount": 1000
+}
+end note
+api_customer -> api_customer: Obtem a quantidade a ser transferida
+alt #LightGreen amountToTransfer < 10_000,00
+    api_customer -> api_customer
+    api_customer -> db: Busca conta de origem com saldo em conta.
+    api_customer <- db
+    alt sourceAccount isPresent
+      api_customer -> db: Busca conta de destino pela agency and accountNumber
+      api_customer <- db
+      alt targetAccount isPresent
+        api_customer -> db: LOCK Transaction pelo sourceAccountId
+        api_customer <- db
+
+        api_customer -> db: Obtem a conta de origem
+        api_customer -> db: Obtem a conta de destino
+        api_customer -> api_customer: Realiza o DEBITO na conta de origem
+        api_customer -> api_customer: Realiza o CREDITO na conta de destino
+        api_customer -> db: Commit as mudancas
+        api_customer -> db: UNLOCK Transaction
+      end
+    end
+    api_customer -> db: Registra a transferencia de sucesso
+    api_customer <- db
+else #IndianRed
+    api_customer -> db: Registra a tentativa de transferencia com falha
+    api_customer <- db
+    api_customer -> api_customer: Lanca exception
+end
+api_customer -> customer
+
+'developer -> project: Create working branch from DEV
+'developer <- project: Working branch
+'
+'developer -> developer: Implement migration locally (docker)
+'
+'developer -> project: Submit PR/MR.
+'developer <- project: PR/MR Created.
+'
+'project --> project: Obtem o migration.
+'project --> dmr: WEBHOOK ou Pipeline: Register migration.
+'dmr -> dmr: Registra status PENDENDE
+'project <- dmr: 201: Created
+'
+'dmr --> dmr: Inicia processo\n Implantação DB Test\n Automation Tests
+'alt #LightGreen statusTest == "OK"
+'    dmr --> dmr: Atualiza status "OK"
+'else #IndianRed statusTest == "FAIL"
+'    dmr --> dmr: Atualiza status "FAIL"
+'end
+
+@enduml
