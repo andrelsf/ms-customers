@@ -28,6 +28,7 @@ Features
 |  GET   | Content-Type: application/json  | /api/v1/customers?page=0&size=10         | Controle de paginacao.                                  |
 |  GET   | Content-Type: application/json  | /api/v1/customers/{customerId}           | Obtem o registro do cliente pelo ID.                    |
 | DELETE | Content-Type: application/json  | /api/v1/customers/{customerId}           | (Delete Logico) Inativa um cliente pelo ID.             |
+| PATCH  | Content-Type: application/json  | /api/v1/customers/{customerId}           | Ativa um cliente pelo ID.                               |
 |  POST  | Content-Type: application/json  | /api/v1/customers/{customerId}/transfers | Realiza transferencia entre contas.                     |
 |  GET   | Content-Type: application/json  | /api/v1/customers/{customerId}/transfers | Obtem a listagem de todas as transferencias realizadas. |
 
@@ -219,7 +220,7 @@ curl --request GET \
 
 ---
 
-#### Inativa o cliente pelo ID
+#### Inativar o cliente pelo ID
 
 ```shell
 curl -v --request DELETE \
@@ -231,4 +232,20 @@ Exemplo resposta
 ```shell
 < HTTP/1.1 204 No Content
 < Date: Wed, 07 Aug 2024 23:56:13 GMT
+```
+
+---
+
+#### Ativar o cliente pelo ID
+
+```shell
+curl -v --request PATCH \
+--location 'http://localhost:8091/api/v1/customers/3d05773e-513e-11ef-85b4-938a0beed59a' \
+--header 'Content-Type: application/json; charset=utf-8'
+```
+
+Exemplo de response
+```shell
+< HTTP/1.1 204 No Content
+< Date: Thu, 08 Aug 2024 03:40:32 GMT
 ```
