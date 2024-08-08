@@ -44,24 +44,4 @@ else #IndianRed
 end
 api_customer -> customer
 
-'developer -> project: Create working branch from DEV
-'developer <- project: Working branch
-'
-'developer -> developer: Implement migration locally (docker)
-'
-'developer -> project: Submit PR/MR.
-'developer <- project: PR/MR Created.
-'
-'project --> project: Obtem o migration.
-'project --> dmr: WEBHOOK ou Pipeline: Register migration.
-'dmr -> dmr: Registra status PENDENDE
-'project <- dmr: 201: Created
-'
-'dmr --> dmr: Inicia processo\n Implantação DB Test\n Automation Tests
-'alt #LightGreen statusTest == "OK"
-'    dmr --> dmr: Atualiza status "OK"
-'else #IndianRed statusTest == "FAIL"
-'    dmr --> dmr: Atualiza status "FAIL"
-'end
-
 @enduml
