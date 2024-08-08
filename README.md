@@ -9,6 +9,8 @@ Features
 - Bloqueio de concorrencia nas transferencias.
 - Registro de tentativas de transferencia com sucesso e falhas.
 - Listagem das transferencias realizadas de cada usuario.
+- Testes de Integracao
+  - [ms-customers-automated-tests-rest-assured](https://github.com/andrelsf/ms-accounts-automated-tests)
 
 ### Requirements
  - Java 21
