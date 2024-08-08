@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,6 +69,12 @@ public class CustomerResource {
   @DeleteMapping("/{customerId}")
   public ResponseEntity<Void> inactiveById(@PathVariable @NotNull final UUID customerId) {
     customerService.inactivateCustomer(customerId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{customerId}")
+  public ResponseEntity<Void> activeById(@PathVariable @NotNull final UUID customerId) {
+    customerService.activateCustomer(customerId);
     return ResponseEntity.noContent().build();
   }
 

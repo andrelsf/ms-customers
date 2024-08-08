@@ -44,23 +44,31 @@ public class CustomerServiceImpl implements CustomerService {
     return customerAtomicReference.get();
   }
 
-  private CustomerEntity find(final String customerId) {
-    return customerRepository.findByIdAndAccount_Status(customerId, AccountStatus.ACTIVE)
+  private CustomerEntity find(final String customerId, final AccountStatus status) {
+    return customerRepository.findByIdAndAccount_Status(customerId, status)
         .orElseThrow(() ->
             new CustomerNotFoundException("Customer not found by ID=".concat(customerId)));
   }
 
   @Override
   @Transactional
+  public void activateCustomer(UUID customerId) {
+    CustomerEntity customer = this.find(customerId.toString(), AccountStatus.INACTIVE);
+    customer.activate();
+    customerRepository.save(customer);
+  }
+
+  @Override
+  @Transactional
   public void inactivateCustomer(UUID customerId) {
-    CustomerEntity customer = this.find(customerId.toString());
+    CustomerEntity customer = this.find(customerId.toString(), AccountStatus.ACTIVE);
     customer.inactivate();
     customerRepository.save(customer);
   }
 
   @Override
   public CustomerResponse findById(final String customerId) {
-    final CustomerEntity customer = this.find(customerId);
+    final CustomerEntity customer = this.find(customerId, AccountStatus.ACTIVE);
     return Mapper.toCustomerResponse(customer);
   }
 

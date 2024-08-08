@@ -119,4 +119,8 @@ public class CustomerEntity {
   public void inactivate() {
     this.account.setStatus(AccountStatus.INACTIVE);
   }
+
+  public void activate() {
+    this.account.setStatus(AccountStatus.ACTIVE);
+  }
 }

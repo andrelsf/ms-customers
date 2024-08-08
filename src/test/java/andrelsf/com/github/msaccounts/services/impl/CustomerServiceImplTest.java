@@ -119,7 +119,7 @@ public class CustomerServiceImplTest {
   }
 
   @Test
-  @DisplayName("Deve inativar o cliente pelo seu identificador")
+  @DisplayName("Dado cliente ATIVO deve INATIVAR o cliente pelo seu identificador")
   void test_inactivateCustomer() {
     final UUID customerId = UUID.randomUUID();
     AccountEntity accountEntity = new AccountEntity();
@@ -131,6 +131,23 @@ public class CustomerServiceImplTest {
         .thenReturn(Optional.of(customerEntity));
 
     customerService.inactivateCustomer(customerId);
+
+    verify(customerRepository, times(1)).save(customerEntity);
+  }
+
+  @Test
+  @DisplayName("Dado o cliente INATIVO deve ATIVAR o cliente pelo seu identificador")
+  void test_activateCustomer() {
+    final UUID customerId = UUID.randomUUID();
+    AccountEntity accountEntity = new AccountEntity();
+    accountEntity.fillWith(customerId.toString(), 1234, 4321);
+    final CustomerEntity customerEntity = new CustomerEntity(
+        customerId.toString(), "Jose Nome Facil", "11122233344", accountEntity);
+
+    when(customerRepository.findByIdAndAccount_Status(customerId.toString(), AccountStatus.INACTIVE))
+        .thenReturn(Optional.of(customerEntity));
+
+    customerService.activateCustomer(customerId);
 
     verify(customerRepository, times(1)).save(customerEntity);
   }

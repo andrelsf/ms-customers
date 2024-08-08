@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CustomerService {
+  void activateCustomer(final UUID customerId);
   void inactivateCustomer(final UUID customerId);
   CustomerResponse findById(final String clientId);
   List<CustomerResponse> getAll(final Params params);
