@@ -1,12 +1,14 @@
 package andrelsf.com.github.msaccounts.handlers;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import andrelsf.com.github.msaccounts.handlers.exceptions.CustomerNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +18,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class ApiRestHandlerExceptions {
 
   private static final Logger log = LoggerFactory.getLogger(ApiRestHandlerExceptions.class);
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ApiErrorResponse> handlerDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    log.error(ex.getMessage(), ex);
+    return ResponseEntity.status(CONFLICT)
+        .body(new ApiErrorResponse(CONFLICT.value(), "CPF already registered"));
+  }
 
   @ExceptionHandler(CustomerNotFoundException.class)
   public ResponseEntity<ApiErrorResponse> handleCustomerNotFoundException(CustomerNotFoundException ex) {

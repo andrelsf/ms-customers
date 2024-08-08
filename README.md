@@ -21,11 +21,13 @@ Features
 
 | Method |             Headers             | Resource                                 | Description                                             |
 |:------:|:-------------------------------:|:-----------------------------------------|:--------------------------------------------------------|
-|  POST  | Content-Type: application/json  | /api/v1/customers                        | Registra um novo cliente e sua conta.                    |
-|  GET   | Content-Type: application/json  | /api/v1/customers                        | Obtem a listagem de todos os clientes cadastros.        |
+|  POST  | Content-Type: application/json  | /api/v1/customers                        | Registra um novo cliente e sua conta.                   |
+|  GET   | Content-Type: application/json  | /api/v1/customers                        | Obtem a listagem de todos os clientes ATIVOS (default). |
+|  GET   | Content-Type: application/json  | /api/v1/customers?status=INACTIVE        | Obtem a listagem de todos os clientes INATIVOS.         |
 |  GET   | Content-Type: application/json  | /api/v1/customers?accountNumber=1234     | Filtragem de todos os clientes pelo numero da conta.    |
 |  GET   | Content-Type: application/json  | /api/v1/customers?page=0&size=10         | Controle de paginacao.                                  |
 |  GET   | Content-Type: application/json  | /api/v1/customers/{customerId}           | Obtem o registro do cliente pelo ID.                    |
+| DELETE | Content-Type: application/json  | /api/v1/customers/{customerId}           | (Delete Logico) Inativa um cliente pelo ID.             |
 |  POST  | Content-Type: application/json  | /api/v1/customers/{customerId}/transfers | Realiza transferencia entre contas.                     |
 |  GET   | Content-Type: application/json  | /api/v1/customers/{customerId}/transfers | Obtem a listagem de todas as transferencias realizadas. |
 
@@ -55,6 +57,8 @@ Exemplo de resposta
 ```
 
 > `NOTA`: Pelo header location e especificado como acessar o recurso registrado.
+
+> `Este endpoint trata a idepotencia, caso uma segunda chamada seja efetuada o mesmo returno e obtido.`
 
 ---
 
@@ -182,7 +186,7 @@ Exemplo de resposta
 
 ---
 
-#### 
+#### Obtem a lista de todas as transferencias realizadas pelo cliente
 
 ```shell
 curl --request GET \
@@ -213,3 +217,18 @@ curl --request GET \
 ]
 ```
 
+---
+
+#### Inativa o cliente pelo ID
+
+```shell
+curl -v --request DELETE \
+--location 'http://localhost:8091/api/v1/customers/5ccac7a4-513e-11ef-9485-bbfbb6bdc7c6' \
+--header 'Content-Type: application/json; charset=utf-8'
+```
+
+Exemplo resposta
+```shell
+< HTTP/1.1 204 No Content
+< Date: Wed, 07 Aug 2024 23:56:13 GMT
+```

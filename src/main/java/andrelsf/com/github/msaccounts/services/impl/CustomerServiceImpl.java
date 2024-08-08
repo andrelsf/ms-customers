@@ -2,8 +2,8 @@ package andrelsf.com.github.msaccounts.services.impl;
 
 import andrelsf.com.github.msaccounts.api.http.requests.Params;
 import andrelsf.com.github.msaccounts.api.http.requests.PostCustomerRequest;
-import andrelsf.com.github.msaccounts.api.http.responses.AccountResponse;
 import andrelsf.com.github.msaccounts.api.http.responses.CustomerResponse;
+import andrelsf.com.github.msaccounts.entities.AccountStatus;
 import andrelsf.com.github.msaccounts.entities.CustomerEntity;
 import andrelsf.com.github.msaccounts.handlers.exceptions.CustomerNotFoundException;
 import andrelsf.com.github.msaccounts.repositories.CustomerRepository;
@@ -12,6 +12,8 @@ import andrelsf.com.github.msaccounts.services.CustomerService;
 import andrelsf.com.github.msaccounts.utils.Mapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
@@ -28,24 +30,44 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Override
   @Transactional
-  public CustomerResponse create(PostCustomerRequest customerRequest) {
-    final CustomerEntity customerEntity = Mapper.toCustomerEntity(customerRequest);
-    final CustomerEntity customer = customerRepository.save(customerEntity);
-    final AccountResponse accountResponse = accountService.create(customer.getId(), customerRequest.account());
-    return CustomerResponse.of(customer.getId(), customer.getName(), customer.getCpf(), accountResponse);
+  public String create(PostCustomerRequest customerRequest) {
+    AtomicReference<String> customerAtomicReference = new AtomicReference<>();
+    customerRepository.findByCpf(customerRequest.cpf())
+        .ifPresentOrElse(customer -> {
+          customerAtomicReference.set(customer.getId());
+        }, () -> {
+          final CustomerEntity customerEntity = Mapper.toCustomerEntity(customerRequest);
+          final CustomerEntity customer = customerRepository.save(customerEntity);
+          accountService.create(customer.getId(), customerRequest.account());
+          customerAtomicReference.set(customer.getId());
+        });
+    return customerAtomicReference.get();
+  }
+
+  private CustomerEntity find(final String customerId) {
+    return customerRepository.findByIdAndAccount_Status(customerId, AccountStatus.ACTIVE)
+        .orElseThrow(() ->
+            new CustomerNotFoundException("Customer not found by ID=".concat(customerId)));
   }
 
   @Override
-  public CustomerResponse findById(final String clientId) {
-    return customerRepository.findById(clientId)
-        .map(Mapper::toCustomerResponse)
-        .orElseThrow(() ->
-            new CustomerNotFoundException("Customer not found by ID=".concat(clientId)));
+  @Transactional
+  public void inactivateCustomer(UUID customerId) {
+    CustomerEntity customer = this.find(customerId.toString());
+    customer.inactivate();
+    customerRepository.save(customer);
+  }
+
+  @Override
+  public CustomerResponse findById(final String customerId) {
+    final CustomerEntity customer = this.find(customerId);
+    return Mapper.toCustomerResponse(customer);
   }
 
   @Override
   public List<CustomerResponse> getAll(Params params) {
-    return customerRepository.findAll(params.accountNumber(), params.getPageable())
+    return customerRepository.findAll(
+        params.status(), params.accountNumber(), params.getPageable())
         .stream()
         .map(Mapper::toCustomerResponse)
         .collect(Collectors.toList());

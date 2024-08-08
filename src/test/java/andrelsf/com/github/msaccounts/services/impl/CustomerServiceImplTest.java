@@ -3,6 +3,8 @@ package andrelsf.com.github.msaccounts.services.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import andrelsf.com.github.msaccounts.api.http.requests.AccountRequest;
@@ -10,6 +12,7 @@ import andrelsf.com.github.msaccounts.api.http.requests.Params;
 import andrelsf.com.github.msaccounts.api.http.requests.PostCustomerRequest;
 import andrelsf.com.github.msaccounts.api.http.responses.CustomerResponse;
 import andrelsf.com.github.msaccounts.entities.AccountEntity;
+import andrelsf.com.github.msaccounts.entities.AccountStatus;
 import andrelsf.com.github.msaccounts.entities.CustomerEntity;
 import andrelsf.com.github.msaccounts.handlers.exceptions.CustomerNotFoundException;
 import andrelsf.com.github.msaccounts.repositories.CustomerRepository;
@@ -50,11 +53,11 @@ public class CustomerServiceImplTest {
     when(customerRepository.save(any(CustomerEntity.class)))
         .thenReturn(customerEntityReturned);
 
-    final CustomerResponse customerResponse = customerService.create(postClientRequest);
+    final String customerId = customerService.create(postClientRequest);
 
-    assertThat(customerResponse)
-        .isNotNull()
-        .isInstanceOf(CustomerResponse.class);
+    assertThat(customerId)
+        .isNotBlank()
+        .isEqualTo(clientIdExpected);
   }
 
   @Test
@@ -66,7 +69,7 @@ public class CustomerServiceImplTest {
     final CustomerEntity customerEntity = new CustomerEntity(
         customerId, "Jose Nome Facil", "11122233344", accountEntity);
 
-    when(customerRepository.findById(customerId))
+    when(customerRepository.findByIdAndAccount_Status(customerId, AccountStatus.ACTIVE))
         .thenReturn(Optional.of(customerEntity));
 
     final CustomerResponse customerResponse = customerService.findById(customerId);
@@ -85,7 +88,7 @@ public class CustomerServiceImplTest {
   void test_findById_notFound() {
     final String customerIdInvalid = UUID.randomUUID().toString();
 
-    when(customerRepository.findById(customerIdInvalid))
+    when(customerRepository.findByIdAndAccount_Status(customerIdInvalid, AccountStatus.ACTIVE))
         .thenReturn(Optional.empty());
 
     assertThatThrownBy(() ->
@@ -103,9 +106,9 @@ public class CustomerServiceImplTest {
     final CustomerEntity clientEntity = new CustomerEntity(
         customerId, "Jose Nome Facil", "11122233344", accountEntity);
     final List<CustomerEntity> customers = List.of(clientEntity);
-    final Params params = Params.of(null, 0, 10);
+    final Params params = Params.of("ACTIVE", null, 0, 10);
 
-    when(customerRepository.findAll(params.accountNumber(), params.getPageable()))
+    when(customerRepository.findAll(params.status(), params.accountNumber(), params.getPageable()))
         .thenReturn(customers);
 
     final List<CustomerResponse> clientsResponse = customerService.getAll(params);
@@ -113,5 +116,22 @@ public class CustomerServiceImplTest {
     assertThat(clientsResponse)
         .isNotEmpty()
         .hasSize(1);
+  }
+
+  @Test
+  @DisplayName("Deve inativar o cliente pelo seu identificador")
+  void test_inactivateCustomer() {
+    final UUID customerId = UUID.randomUUID();
+    AccountEntity accountEntity = new AccountEntity();
+    accountEntity.fillWith(customerId.toString(), 1234, 4321);
+    final CustomerEntity customerEntity = new CustomerEntity(
+        customerId.toString(), "Jose Nome Facil", "11122233344", accountEntity);
+
+    when(customerRepository.findByIdAndAccount_Status(customerId.toString(), AccountStatus.ACTIVE))
+        .thenReturn(Optional.of(customerEntity));
+
+    customerService.inactivateCustomer(customerId);
+
+    verify(customerRepository, times(1)).save(customerEntity);
   }
 }

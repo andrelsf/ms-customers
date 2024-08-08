@@ -115,4 +115,8 @@ public class CustomerEntity {
   public int hashCode() {
     return Objects.hash(id, name, cpf, createdAt, updatedAt);
   }
+
+  public void inactivate() {
+    this.account.setStatus(AccountStatus.INACTIVE);
+  }
 }

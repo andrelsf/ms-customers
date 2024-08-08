@@ -15,6 +15,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,19 +42,20 @@ public class CustomerResource {
 
   @PostMapping
   public ResponseEntity<Void> postCreate(@RequestBody @Valid final PostCustomerRequest postCustomerRequest) {
-    final CustomerResponse customer = customerService.create(postCustomerRequest);
+    final String customerId = customerService.create(postCustomerRequest);
     final URI uriLocation = UriComponentsBuilder.fromUriString("/api/v1/customers/{customerId}")
-        .buildAndExpand(customer.customerId())
+        .buildAndExpand(customerId)
         .toUri();
     return ResponseEntity.created(uriLocation).build();
   }
 
   @GetMapping
   public ResponseEntity<List<CustomerResponse>> getAll(
+      @RequestParam(value = "status", defaultValue = "ACTIVE") String status,
       @RequestParam(value = "accountNumber", defaultValue = "") Integer accountNumber,
       @RequestParam(defaultValue = "0") final Integer page,
       @RequestParam(defaultValue = "10") final Integer size) {
-    final List<CustomerResponse> clients = customerService.getAll(Params.of(accountNumber, page, size));
+    final List<CustomerResponse> clients = customerService.getAll(Params.of(status, accountNumber, page, size));
     return ResponseEntity.ok(clients);
   }
 
@@ -61,6 +63,12 @@ public class CustomerResource {
   public ResponseEntity<CustomerResponse> getById(@PathVariable @NotNull final UUID customerId) {
     final CustomerResponse clientResponse = customerService.findById(customerId.toString());
     return ResponseEntity.ok(clientResponse);
+  }
+
+  @DeleteMapping("/{customerId}")
+  public ResponseEntity<Void> inactiveById(@PathVariable @NotNull final UUID customerId) {
+    customerService.inactivateCustomer(customerId);
+    return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/{customerId}/transfers")

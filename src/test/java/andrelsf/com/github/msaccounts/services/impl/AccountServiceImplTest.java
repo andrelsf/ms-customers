@@ -41,7 +41,7 @@ public class AccountServiceImplTest {
   @Test
   @DisplayName("Deve realizar consulta para obter uma lista de todas as contas")
   void test_getAccounts_without_filter() {
-    final Params params = Params.of(null, 0, 10);
+    final Params params = Params.of("ACTIVE", null, 0, 10);
     final AccountEntity accountEntity = buildAccountEntity();
 
     when(accountRepository.findAll(AccountStatus.ACTIVE, params.accountNumber(), params.getPageable()))
