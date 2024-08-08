@@ -33,17 +33,17 @@ public class CustomerServiceImpl implements CustomerService {
   @Override
   @Transactional
   public String create(PostCustomerRequest customerRequest) {
-    AtomicReference<String> customerAtomicReference = new AtomicReference<>();
+    AtomicReference<String> customerIdAtomicReference = new AtomicReference<>();
     customerRepository.findByCpf(customerRequest.cpf())
         .ifPresentOrElse(customer -> {
-          customerAtomicReference.set(customer.getId());
+          customerIdAtomicReference.set(customer.getId());
         }, () -> {
           final CustomerEntity customerEntity = Mapper.toCustomerEntity(customerRequest);
           final CustomerEntity customer = customerRepository.save(customerEntity);
           accountService.create(customer.getId(), customerRequest.account());
-          customerAtomicReference.set(customer.getId());
+          customerIdAtomicReference.set(customer.getId());
         });
-    return customerAtomicReference.get();
+    return customerIdAtomicReference.get();
   }
 
   private CustomerEntity find(final String customerId, final AccountStatus status) {
