@@ -127,7 +127,7 @@ public class CustomerServiceImplTest {
     final CustomerEntity customerEntity = new CustomerEntity(
         customerId.toString(), "Jose Nome Facil", "11122233344", accountEntity);
 
-    when(customerRepository.findByIdAndAccount_Status(customerId.toString(), AccountStatus.ACTIVE))
+    when(customerRepository.findById(customerId.toString()))
         .thenReturn(Optional.of(customerEntity));
 
     customerService.inactivateCustomer(customerId);
@@ -144,7 +144,7 @@ public class CustomerServiceImplTest {
     final CustomerEntity customerEntity = new CustomerEntity(
         customerId.toString(), "Jose Nome Facil", "11122233344", accountEntity);
 
-    when(customerRepository.findByIdAndAccount_Status(customerId.toString(), AccountStatus.INACTIVE))
+    when(customerRepository.findById(customerId.toString()))
         .thenReturn(Optional.of(customerEntity));
 
     customerService.activateCustomer(customerId);

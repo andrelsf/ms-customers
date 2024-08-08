@@ -1,5 +1,7 @@
 package andrelsf.com.github.msaccounts.services.impl;
 
+import static andrelsf.com.github.msaccounts.handlers.exceptions.CustomerNotFoundException.errorMessage;
+
 import andrelsf.com.github.msaccounts.api.http.requests.Params;
 import andrelsf.com.github.msaccounts.api.http.requests.PostCustomerRequest;
 import andrelsf.com.github.msaccounts.api.http.responses.CustomerResponse;
@@ -47,21 +49,27 @@ public class CustomerServiceImpl implements CustomerService {
   private CustomerEntity find(final String customerId, final AccountStatus status) {
     return customerRepository.findByIdAndAccount_Status(customerId, status)
         .orElseThrow(() ->
-            new CustomerNotFoundException("Customer not found by ID=".concat(customerId)));
+            new CustomerNotFoundException(errorMessage.concat(customerId)));
+  }
+
+  private CustomerEntity findByIdOnly(final UUID customerId) {
+    return customerRepository.findById(customerId.toString())
+        .orElseThrow(() ->
+            new CustomerNotFoundException(errorMessage.concat(customerId.toString())));
   }
 
   @Override
   @Transactional
-  public void activateCustomer(UUID customerId) {
-    CustomerEntity customer = this.find(customerId.toString(), AccountStatus.INACTIVE);
+  public void activateCustomer(final UUID customerId) {
+    CustomerEntity customer = findByIdOnly(customerId);
     customer.activate();
     customerRepository.save(customer);
   }
 
   @Override
   @Transactional
-  public void inactivateCustomer(UUID customerId) {
-    CustomerEntity customer = this.find(customerId.toString(), AccountStatus.ACTIVE);
+  public void inactivateCustomer(final UUID customerId) {
+    CustomerEntity customer = findByIdOnly(customerId);
     customer.inactivate();
     customerRepository.save(customer);
   }
