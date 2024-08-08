@@ -19,18 +19,18 @@ Features
 
 ### Recursos
 
-| Method |             Headers             | Resource                                 | Description                                             |
-|:------:|:-------------------------------:|:-----------------------------------------|:--------------------------------------------------------|
-|  POST  | Content-Type: application/json  | /api/v1/customers                        | Registra um novo cliente e sua conta.                   |
-|  GET   | Content-Type: application/json  | /api/v1/customers                        | Obtem a listagem de todos os clientes ATIVOS (default). |
-|  GET   | Content-Type: application/json  | /api/v1/customers?status=INACTIVE        | Obtem a listagem de todos os clientes INATIVOS.         |
-|  GET   | Content-Type: application/json  | /api/v1/customers?accountNumber=1234     | Filtragem de todos os clientes pelo numero da conta.    |
-|  GET   | Content-Type: application/json  | /api/v1/customers?page=0&size=10         | Controle de paginacao.                                  |
-|  GET   | Content-Type: application/json  | /api/v1/customers/{customerId}           | Obtem o registro do cliente pelo ID.                    |
-| DELETE | Content-Type: application/json  | /api/v1/customers/{customerId}           | (Delete Logico) Inativa um cliente pelo ID.             |
-| PATCH  | Content-Type: application/json  | /api/v1/customers/{customerId}           | Ativa um cliente pelo ID.                               |
-|  POST  | Content-Type: application/json  | /api/v1/customers/{customerId}/transfers | Realiza transferencia entre contas.                     |
-|  GET   | Content-Type: application/json  | /api/v1/customers/{customerId}/transfers | Obtem a listagem de todas as transferencias realizadas. |
+|  Method  |             Headers             | Resource                                    | Status Codes  | Description                                             |
+|:--------:|:-------------------------------:|:--------------------------------------------|:-------------:|:--------------------------------------------------------|
+|  `POST`  | Content-Type: application/json  | `/api/v1/customers`                         | 201, 409, 500 | Registra um novo cliente e sua conta.                   |
+|  `GET`   | Content-Type: application/json  | `/api/v1/customers`                         |   200, 500    | Obtem a listagem de todos os clientes ATIVOS (default). |
+|  `GET`   | Content-Type: application/json  | `/api/v1/customers?status=INACTIVE`         | 200, 404, 500 | Obtem a listagem de todos os clientes INATIVOS.         |
+|  `GET`   | Content-Type: application/json  | `/api/v1/customers?accountNumber=1234`      | 200, 404, 500 | Filtragem de todos os clientes pelo numero da conta.    |
+|  `GET`   | Content-Type: application/json  | `/api/v1/customers?page=0&size=10`          |   200, 500    | Controle de paginacao.                                  |
+|  `GET`   | Content-Type: application/json  | `/api/v1/customers/{customerId}`            | 200, 404, 500 | Obtem o registro do cliente pelo ID.                    |
+| `DELETE` | Content-Type: application/json  | `/api/v1/customers/{customerId}`            | 204, 404, 500 | (Delete Logico) Inativa um cliente pelo ID.             |
+| `PATCH`  | Content-Type: application/json  | `/api/v1/customers/{customerId}`            | 204, 404, 500 | Ativa um cliente pelo ID.                               |
+|  `POST`  | Content-Type: application/json  | `/api/v1/customers/{customerId}/transfers`  | 200, 422, 500 | Realiza transferencia entre contas.                     |
+|  `GET`   | Content-Type: application/json  | `/api/v1/customers/{customerId}/transfers`  | 200, 404, 500 | Obtem a listagem de todas as transferencias realizadas. |
 
 ### Exemplos com cURL
 
@@ -59,7 +59,7 @@ Exemplo de resposta
 
 > `NOTA`: Pelo header location e especificado como acessar o recurso registrado.
 
-> `Este endpoint trata a idepotencia, caso uma segunda chamada seja efetuada o mesmo returno e obtido.`
+> `Este endpoint trata duplicidade caso tenha uma nova tentativa de registrar com mesmo CPF sera retornado 409 Conflict.`
 
 ---
 

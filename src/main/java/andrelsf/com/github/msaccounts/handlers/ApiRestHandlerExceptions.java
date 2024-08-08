@@ -23,7 +23,7 @@ public class ApiRestHandlerExceptions {
   public ResponseEntity<ApiErrorResponse> handlerDataIntegrityViolationException(DataIntegrityViolationException ex) {
     log.error(ex.getMessage(), ex);
     return ResponseEntity.status(CONFLICT)
-        .body(new ApiErrorResponse(CONFLICT.value(), "CPF already registered"));
+        .body(new ApiErrorResponse(CONFLICT.value(), ex.getMessage()));
   }
 
   @ExceptionHandler(CustomerNotFoundException.class)

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
     AtomicReference<String> customerIdAtomicReference = new AtomicReference<>();
     customerRepository.findByCpf(customerRequest.cpf())
         .ifPresentOrElse(customer -> {
-          customerIdAtomicReference.set(customer.getId());
+          throw new DataIntegrityViolationException("CPF already registered");
         }, () -> {
           final CustomerEntity customerEntity = Mapper.toCustomerEntity(customerRequest);
           final CustomerEntity customer = customerRepository.save(customerEntity);
