@@ -18,6 +18,19 @@ Features
  - IDE VSCode or Intellij
  - NOTA: Base de dados H2, ou seja, base em memoria.
  - Design de desenvolvimento em Camadas: Controller, Service e repository
+ - Docker e docker-compose (Opcional)
+
+### (Optional) Docker
+
+```shell
+# Build and run
+docker-compose up -d
+
+# Stop and remove container
+docker-compose down
+```
+
+---
 
 ### Recursos
 
