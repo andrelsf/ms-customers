@@ -20,7 +20,7 @@ Features
  - Design de desenvolvimento em Camadas: Controller, Service e repository
  - Docker e docker-compose (Opcional)
 
-### (Optional) Docker
+### (Opcional) Docker
 
 ```shell
 # Build and run
