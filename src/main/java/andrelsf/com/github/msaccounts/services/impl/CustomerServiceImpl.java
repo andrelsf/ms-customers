@@ -33,7 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Override
   @Transactional
-  public String create(PostCustomerRequest customerRequest) {
+  public String create(final PostCustomerRequest customerRequest) {
     AtomicReference<String> customerIdAtomicReference = new AtomicReference<>();
     customerRepository.findByCpf(customerRequest.cpf())
         .ifPresentOrElse(customer -> {
@@ -82,7 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public List<CustomerResponse> getAll(Params params) {
+  public List<CustomerResponse> getAll(final Params params) {
     return customerRepository.findAll(
         params.status(), params.accountNumber(), params.getPageable())
         .stream()

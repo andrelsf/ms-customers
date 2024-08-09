@@ -36,7 +36,7 @@ public class TransactionServiceImpl implements TransactionService {
 
   @Override
   @Transactional
-  public void unlock(UUID accountId) {
+  public void unlock(final UUID accountId) {
     transactionRepository.findById(accountId.toString())
         .ifPresent(transactionRepository::delete);
     log.info("Unlock accountId=".concat(accountId.toString()));

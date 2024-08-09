@@ -28,7 +28,9 @@ public class TransferServiceImpl implements TransferService {
   private final TransferRepository transferRepository;
   private final TransactionService transactionService;
 
-  public TransferServiceImpl(AccountService accountService, TransferRepository transferRepository,
+  public TransferServiceImpl(
+      AccountService accountService,
+      TransferRepository transferRepository,
       TransactionService transactionService) {
     this.accountService = accountService;
     this.transferRepository = transferRepository;

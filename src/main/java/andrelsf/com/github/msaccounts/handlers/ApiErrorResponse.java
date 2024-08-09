@@ -1,10 +1,12 @@
 package andrelsf.com.github.msaccounts.handlers;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
 import org.springframework.http.HttpStatus;
 
 public class ApiErrorResponse {
 
-  private Integer code;
+  private final Integer code;
   private String message;
 
   public ApiErrorResponse(Integer code, String message) {
@@ -13,12 +15,7 @@ public class ApiErrorResponse {
   }
 
   public static ApiErrorResponse contactSysAdmin() {
-    return new ApiErrorResponse(
-        HttpStatus.INTERNAL_SERVER_ERROR.value(), "Contact SysAdmin");
-  }
-
-  public Integer getCode() {
-    return code;
+    return new ApiErrorResponse(INTERNAL_SERVER_ERROR.value(), "Contact SysAdmin");
   }
 
   public String getMessage() {

@@ -59,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   @Transactional
-  public void processTransfer(String sourceAccountId, String targetAccountId, BigDecimal amount) {
+  public void processTransfer(final String sourceAccountId, final String targetAccountId, final BigDecimal amount) {
     try {
       AccountEntity sourceAccount = accountRepository.findById(sourceAccountId).get();
       AccountEntity targetAccount = accountRepository.findById(targetAccountId).get();

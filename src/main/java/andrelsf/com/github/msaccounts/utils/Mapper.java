@@ -17,7 +17,7 @@ public class Mapper {
   private Mapper() {}
 
 
-  public static AccountResponse toAccountResponse(AccountEntity accountEntity) {
+  public static AccountResponse toAccountResponse(final AccountEntity accountEntity) {
     return new AccountResponse(
         accountEntity.getId(),
         accountEntity.getAgency(),
@@ -51,17 +51,17 @@ public class Mapper {
     return transferEntity;
   }
 
-  public static CustomerEntity toCustomerEntity(PostCustomerRequest customerRequest) {
+  public static CustomerEntity toCustomerEntity(final PostCustomerRequest customerRequest) {
     return new CustomerEntity(customerRequest.name(), customerRequest.cpf());
   }
 
-  public static AccountEntity buildAccountEntity(String accountId, AccountRequest account) {
+  public static AccountEntity buildAccountEntity(final String accountId, final AccountRequest account) {
     AccountEntity accountEntity = new AccountEntity();
     accountEntity.fillWith(accountId, account.agency(), account.accountNumber());;
     return accountEntity;
   }
 
-  public static CustomerResponse toCustomerResponse(CustomerEntity customerEntity) {
+  public static CustomerResponse toCustomerResponse(final CustomerEntity customerEntity) {
     return new CustomerResponse(
         customerEntity.getId(),
         customerEntity.getName(),

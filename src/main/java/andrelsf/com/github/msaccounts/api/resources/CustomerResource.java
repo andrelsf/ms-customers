@@ -1,5 +1,7 @@
 package andrelsf.com.github.msaccounts.api.resources;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import andrelsf.com.github.msaccounts.api.http.requests.Params;
 import andrelsf.com.github.msaccounts.api.http.requests.PostCustomerRequest;
 import andrelsf.com.github.msaccounts.api.http.requests.PostTransferRequest;
@@ -13,7 +15,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +30,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping(
   value = "/v1/customers",
-  consumes = MediaType.APPLICATION_JSON_VALUE,
-  produces = MediaType.APPLICATION_JSON_VALUE)
+  consumes = APPLICATION_JSON_VALUE,
+  produces = APPLICATION_JSON_VALUE)
 public class CustomerResource {
 
   private final CustomerService customerService;
