@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  ms-customers:
+    labels:
+      andrelsf.com.github.author: "Andre Ferreira <andre.dev.linux@gmail.com>"
+      andrelsf.com.github.description: "API Customers"
+      andrelsf.com.github.license: "MIT"
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8091:8091"
